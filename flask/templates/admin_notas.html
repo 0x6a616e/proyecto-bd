@@ -1,1 +1,210 @@
-A
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="/static/css/custom.css">
+    <link rel="stylesheet" href="/static/css/custom.css.map">
+    <title>Administración Pacientes Arte Dental</title>
+</head>
+<body >
+    <header class="">
+        <nav class="px-5 navbar navbar-expand-sm bg-white fixed-top">
+            <div class="container-fluid">
+                <!--LOGO-->
+                <a class="navbar-brand" href='/'>
+                    <img src="/static/images/arte dental logo.png">
+                </a>
+                <!--NAV TAB-->
+                <ul class="nav nav-tabs">
+                    <li class="nav-item">
+                        <a class="nav-link text-morado" href="/admin_pacientes">
+                            Pacientes
+                        </a>
+                    </li>
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle text-morado" data-bs-toggle="dropdown" href="#" role="button" aria-expanded="false">
+                            Clínicas
+                        </a>
+                        <ul class="dropdown-menu">
+                            <li><a class="dropdown-item" href="/admin_sucursales">Sucursales</a></li>
+                            <li><a class="dropdown-item" href="/admin_dentistas">Dentistas</a></li>
+                            <li><a class="dropdown-item" href="/admin_horarios">Horarios</a></li>
+                        </ul>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link text-morado" href="/admin_servmed">
+                                Servicios y medicamentos
+                        </a>
+                    </li>
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle text-morado" data-bs-toggle="dropdown" href="#" role="button" aria-expanded="false">
+                            Citas
+                        </a>
+                        <ul class="dropdown-menu">
+                            <li><a class="dropdown-item" href="/admin_citas">Citas agendadas</a></li>
+                            <li><a class="dropdown-item" href="/admin_notas">Notas</a></li>
+                            <li><a class="dropdown-item" href="/admin_recetas">Recetas</a></li>
+                        </ul>
+                    </li>
+                </ul>
+            </div>
+        </nav>
+        <hr class="" style="height:50px; border-width:0; color:gray; background-color:blue">
+    </header>
+    <hr class="" style="height:30px; opacity: 1; background-color: #6600A1">
+    
+    <main class="px-5">
+        <h1 class="text-center">Administración</h1>
+        <p>
+            Bienvenide, administradore. Aquí puedes realizar, según las especificaciones
+            de cada tabla, operaciones CRUD, lo cual conlleva crear, leer, actualizar y borrar
+            datos, y lo mejor es que usarás una interfaz, ya que no eres ITC, figlio di Troia.
+            Baci nel senza-angoli.
+        </p>
+        <!--TABS-->
+        <ul class="nav nav-tabs" role="tablist">
+            <li class="nav-item">
+                <a class="nav-link text-morado active" data-bs-toggle="tab" href="#menu_pacientes">
+                    Notas
+                </a>
+            </li>
+        </ul>
+        
+        <div class="tab-content">
+            <!--CONTENEDOR DE CRUD DE NOTAS-->
+            <div id="menu_pacientes" class="container tab-pane active"><br>
+                <h3>Notas</h3>
+                <!--PILLS-->
+                <ul class="nav nav-pills" role="tablist">
+                    <li class="nav-item">
+                        <button onclick="" class="nav-link active" id="btp1" data-bs-toggle="pill" href="#op1" 
+                        type="button" role="pill" aria-controls="op1" aria-selected="true">
+                        Registrar nota
+                        </button>
+                    </li>
+                    <li class="nav-item">
+                        <button onclick="" class="nav-link" id="btp3" data-bs-toggle="pill" href="#op3" 
+                        type="button" role="pill" aria-controls="op3" aria-selected="false">
+                            Mostrar notas
+                        </button>
+                    </li>
+                </ul>
+                <!--menu pills-->
+                <div class="tab-content">
+                    <div id="op1" class="container tab-pane active">
+                        <form id="form-nuevo" action="/admin_registrar_nota" method="POST">
+                            <div class="row pt-4">
+                                <div class="col">
+                                    <label>ID Cita</label>
+                                    <input name="id_cita" type="text" class="form-control" id="first-name-field" placeholder="111" required>
+                                </div>
+                                <div class="col">
+                                    <label>Nota</label>
+                                    <input name="nota" type="text" class="form-control" id="last-name1-field" placeholder="Texto" required>
+                                </div>
+                            </div>
+                            <div class="row pt-4">
+                                <button class="btn btn-morado col-sm-3" type="submit">Registrar</button>
+                            </div>
+                        </form>
+                    </div>
+                    <div id="op3" class="container tab-pane fade">
+                        <table class="table table-striped">
+                            <thead>
+                                <tr>
+                                    <th>ID Cita</th>
+                                    <th>Notas</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for note in notes %}
+                                <tr>
+                                <td>{{ note[0] }}</td>
+                                <td>{{ note[1] }}</td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </main>
+
+    <hr class="" style="height:10px; opacity: 1; background-color: #6600A1">
+
+    <script src="/static/node_modules/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="/static/node_modules/jquery/dist/jquery.slim.js"></script>
+    <script type="text/javascript">
+        let tabActiva = 1;
+        $("#btp1").addClass("text-white bg-morado");
+        for (var i = 2; i < 4; i++) {
+            $("#btp"+i).addClass("text-morado");
+        }
+
+        $("#btp1").on("click", function() {
+            $("#btp"+tabActiva).removeClass("text-white bg-morado");
+            $("#btp"+tabActiva).addClass("text-morado");
+            tabActiva = 1;
+            $("#btp"+tabActiva).removeClass("text-morado");
+            $("#btp"+tabActiva).addClass("text-white bg-morado");
+        });
+
+        $("#btp2").on("click", function() {
+            $("#btp"+tabActiva).removeClass("text-white bg-morado");
+            $("#btp"+tabActiva).addClass("text-morado");
+            tabActiva = 2;
+            $("#btp"+tabActiva).removeClass("text-morado");
+            $("#btp"+tabActiva).addClass("text-white bg-morado");
+        });
+        
+        $("#btp3").on("click", function() {
+            $("#btp"+tabActiva).removeClass("text-white bg-morado");
+            $("#btp"+tabActiva).addClass("text-morado");
+            tabActiva = 3;
+            $("#btp"+tabActiva).removeClass("text-morado");
+            $("#btp"+tabActiva).addClass("text-white bg-morado");
+        });
+    
+        let tabActiva2 = 1;
+        $("#btc1").addClass("text-white bg-morado");
+        for (var i = 2; i <= 4; i++) {
+            $("#btc"+i).addClass("text-morado");
+        }
+
+
+        function cerrarModal() {
+                $("#cliente_existente").modal("toggle");
+                $("#cliente_invalido").modal("toggle");
+        };
+
+        const xHTTP = new XMLHttpRequest();
+        bandera = false;
+
+        xHTTP.onreadystatechange = function() {
+                if (this.readyState == 4 && this.status == 200) {
+                    validado = JSON.parse(xHTTP.responseText)["validado"]
+                    if (validado != "") {
+                        $("#cliente_invalido").modal("toggle");
+                        $("#cliente_existente").modal("toggle");
+                    } else {
+                        bandera = true;
+                    }
+                }
+            }
+            
+        $("#form-nuevo").on("submit", function() {
+            url = "http://localhost:5000/val_usuario/" + $("#email-field").val();
+            xHTTP.open("GET", url, false);
+            xHTTP.send();
+            if (!bandera) {
+                return false;
+            }
+        });    
+
+    </script>
+</body>
+</html>

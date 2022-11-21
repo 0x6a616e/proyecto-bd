@@ -16,7 +16,7 @@
                 <a class="navbar-brand" href='/'>
                     <img src="/static/images/arte dental logo.png">
                 </a>
-
+                <!--NAV TAB-->
                 <ul class="nav nav-tabs">
                     <li class="nav-item">
                         <a class="nav-link text-morado" href="/admin_pacientes">
@@ -63,33 +63,275 @@
             datos, y lo mejor es que usarás una interfaz, ya que no eres ITC, figlio di Troia.
             Baci nel senza-angoli.
         </p>
+        <!--TABS-->
+        <ul class="nav nav-tabs" role="tablist">
+            <li class="nav-item">
+                <a class="nav-link text-morado active" data-bs-toggle="tab" href="#menu_pacientes">
+                    Pacientes
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link text-morado" data-bs-toggle="tab" href="#menu_cuidados">
+                    Cuidados de pacientes
+                </a>
+            </li>
+        </ul>
+        <div class="tab-content">
+            <!--CONTENEDOR DE CRUD DE PACIENTES-->
+            <div id="menu_pacientes" class="container tab-pane active"><br>
+                <h3>Pacientes</h3>
+                <!--PILLS-->
+                <ul class="nav nav-pills" role="tablist">
+                    <li class="nav-item">
+                        <button onclick="" class="nav-link active" id="btp1" data-bs-toggle="pill" href="#op1" 
+                        type="button" role="pill" aria-controls="op1" aria-selected="true">
+                        Registrar paciente
+                        </button>
+                    </li>
 
-        <table class="table table-striped">
-            <thead>
-                <tr>
-                    <th>ID</th>
-                    <th>Nombres</th>
-                    <th>Apellido paterno</th>
-                    <th>Apellido materno</th>
-                    <th>Teléfono</th>
-                    <th>Correo</th>
-                    <th>Fecha de nacimiento</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for paciente in pacientes %}
-                <tr>
-                <td>{{ paciente[0] }}</td>
-                <td>{{ paciente[1] }}</td>
-                <td>{{ paciente[2] }}</td>
-                <td>{{ paciente[3] }}</td>
-                <td>{{ paciente[4] }}</td>
-                <td>{{ paciente[5] }}</td>
-                <td>{{ paciente[6] }}</td>
-                </tr>
-                {% endfor %}
-            </tbody>
-        </table>
+                    <li class="nav-item">
+                        <button onclick="" class="nav-link" id="btp2" data-bs-toggle="pill" href="#op2"
+                        type="button" role="pill" aria-controls="op2" aria-selected="false">
+                            Modificar paciente
+                        </button>
+                    </li>
+                    <li class="nav-item">
+                        <button onclick="" class="nav-link" id="btp3" data-bs-toggle="pill" href="#op3" 
+                        type="button" role="pill" aria-controls="op3" aria-selected="false">
+                            Mostrar pacientes
+                        </button>
+                    </li>
+                </ul>
+                <!--menu pills-->
+                <div class="tab-content">
+                    <div id="op1" class="container tab-pane active">
+                        <form id="form-nuevo" action="/admin_registrar_paciente" method="POST">
+                            <div class="row pt-4">
+                                <div class="col">
+                                    <label>Nombre</label>
+                                    <input name="first-name" type="text" class="form-control" id="first-name-field" placeholder="Elvira" required>
+                                </div>
+                                <div class="col">
+                                    <label>Apellido paterno</label>
+                                    <input name="last-name1" type="text" class="form-control" id="last-name1-field" placeholder="Gámez" required>
+                                </div>
+                                <div class="col">
+                                    <label>Apellido materno</label>
+                                    <input name="last-name2" type="text" class="form-control" id="last-name2-field" placeholder="Robledo" required>
+                                </div>
+                            </div>
+                            <div class="row pt-4">
+                                <div class="col">
+                                    <label>Teléfono</label>
+                                    <input name="tel-field" type="text" pattern="^\d{3}-\d{3}-\d{4}$" class="form-control" id="tel-field" placeholder="811-111-1111" required>
+                                </div>
+                                <div class="col">
+                                    <label>Correo</label>
+                                    <input name="email-field" type="email" class="form-control" id="email-field" placeholder="ejemplo@hotmail.com" required>
+                                </div>
+                                <div class="col">
+                                    <label>Fecha de nacimiento</label>
+                                    <input name="birthdate-field" type="text" pattern="^\d{4}-([0][1-9]|[1][0-2])-([0][1-9]|[1-2][0-9]|[3][0-1])$" class="form-control" id="birthdate-field" placeholder="1993-07-15" required>
+                                </div>
+                            </div>
+                            <div class="row pt-4">
+                                <button class="btn btn-morado col-sm-3" type="submit">Registrar</button>
+                            </div>
+                        </form>
+                        <div class="modal fade" id="cliente_existente" tabindex="-1" role="dialog" aria-labelledby="cliente_existente" aria-hidden="true">
+                            <div class="modal-dialog modal-dialog-centered" role="document">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <h5 class="modal-title" id="cliente_existente_titulo">Correo ya existente</h5>
+                                    </div>
+                                    <div class="modal-body">
+                                        Ya hay una cuenta asociada a este correo.
+                                    </div>
+                                    <div class="modal-footer">
+                                        <button type="button" class="btn btn-primary btn-morado" onclick="cerrarModal()">Entendido</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div id="op2" class="container tab-pane fade">
+                        <form id="form-nuevo" action="/admin_modificar" method="POST">
+                            <input type="hidden" name="tabla" value="pacientes">
+                            <input type="hidden" name="id_nombre" value="pid">
+                            <div class="row pt-4">
+                                <div class="col">
+                                    <label>ID Paciente</label>
+                                    <input name="id" type="text" class="form-control" id="id-field" placeholder="1111" required>
+                                </div>
+                                <div class="col">
+                                    <label>Atributo a modificar</label>
+                                    <select class="form-control" id="atributo-field" name="atributo" required>
+                                        <option disabled selected>Selecciona un atributo</option>
+                                        <option>nombres</option>
+                                        <option>apellidoP</option>
+                                        <option>apellidoM</option>
+                                        <option>telefono</option>
+                                        <option>fecha_nacimiento</option>
+                                    </select>
+                                </div>
+                                <div class="col">
+                                    <label>Valor nuevo</label>
+                                    <input name="valor" type="text" class="form-control" id="valor-field" placeholder="valor" required>
+                                </div>
+                            </div>
+                            <div class="row pt-4">
+                                <button class="btn btn-morado col-sm-3" type="submit">Modificar</button>
+                            </div>
+                        </form>
+                    </div>
+                    <div id="op3" class="container tab-pane fade">
+                        <table class="table table-striped">
+                            <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Nombres</th>
+                                    <th>Apellido paterno</th>
+                                    <th>Apellido materno</th>
+                                    <th>Teléfono</th>
+                                    <th>Correo</th>
+                                    <th>Fecha de nacimiento</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for paciente in pacientes %}
+                                <tr>
+                                <td>{{ paciente[0] }}</td>
+                                <td>{{ paciente[1] }}</td>
+                                <td>{{ paciente[2] }}</td>
+                                <td>{{ paciente[3] }}</td>
+                                <td>{{ paciente[4] }}</td>
+                                <td>{{ paciente[5] }}</td>
+                                <td>{{ paciente[6] }}</td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+            <!--CONTENEDOR DE CRUD DE CUIDADOS-->
+            <div id="menu_cuidados" class="container tab-pane fade"><br>
+                <h3>Cuidados especiales</h3>
+                <!--PILLS-->
+                <ul class="nav nav-pills" role="tablist">
+                    <li class="nav-item">
+                        <button class="nav-link active" id="btc1" data-bs-toggle="pill" href="#opc1" 
+                        type="button" role="pill" aria-controls="opc1" aria-selected="true">
+                            Asignar cuidados especiales a paciente
+                        </button>
+                    </li>
+                    <li class="nav-item">
+                        <button class="nav-link" id="btc2" data-bs-toggle="pill" href="#opc2"
+                        type="button" role="pill" aria-controls="opc2" aria-selected="false">
+                            Mostrar cuidados especiales de pacientes
+                        </button>
+                    </li>
+                    <li class="nav-item">
+                        <button class="nav-link" id="btc3" data-bs-toggle="pill" href="#opc3"
+                        type="button" role="pill" aria-controls="opc3" aria-selected="false">
+                            Registrar cuidado especial
+                        </button>
+                    </li>
+                    <li class="nav-item">
+                        <button class="nav-link" id="btc4" data-bs-toggle="pill" href="#opc4"
+                        type="button" role="pill" aria-controls="opc4" aria-selected="false">
+                            Mostrar cuidados especiales
+                        </button>
+                    </li>
+                </ul>
+                <!--menu pills-->
+                <div class="tab-content">
+                    <div id="opc1" class="container tab-pane active">
+                        <form id="form-asignar-cuidado" action="/admin_registrar_cuidado_paciente" method="POST">
+                            <div class="row pt-4">
+                                <div class="col">
+                                    <label>ID del paciente</label>
+                                    <input name="id-patient" type="text" class="form-control" id="id-patient" placeholder="#" required>
+                                </div>
+                                <div class="col">
+                                    <label>ID del cuidado especial</label>
+                                    <input name="id-care" type="text" class="form-control" id="id-care" placeholder="#" required>
+                                </div>
+                            </div>
+                            <div class="row pt-4">
+                                <button class="btn btn-morado col-sm-3" type="submit">Registrar</button>
+                            </div>
+                        </form>
+                        <div class="modal fade" id="cliente_existente" tabindex="-1" role="dialog" aria-labelledby="cliente_existente" aria-hidden="true">
+                            <div class="modal-dialog modal-dialog-centered" role="document">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <h5 class="modal-title" id="cliente_existente_titulo">Correo ya existente</h5>
+                                    </div>
+                                    <div class="modal-body">
+                                        Ya hay una cuenta asociada a este correo.
+                                    </div>
+                                    <div class="modal-footer">
+                                        <button type="button" class="btn btn-primary btn-morado" onclick="cerrarModal()">Entendido</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div id="opc2" class="container tab-pane fade"><br>
+                        <p>Mostrar cuidados especiales de paciente</p>
+                        <table class="table table-striped">
+                            <thead>
+                                <tr>
+                                    <th>ID del paciente</th>
+                                    <th>Nombre del cuidado</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for cuidado in ce_pac %}
+                                <tr>
+                                <td>{{ cuidado[0] }}</td>
+                                <td>{{ cuidado[1] }}</td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                    <div id="opc3" class="container tab-pane fade">
+                        <form id="form-nuevo" action="/admin_registrar_cuidado" method="POST">
+                            <div class="row pt-4">
+                                <div class="col">
+                                    <label>Descripción del cuidado especial</label>
+                                    <input name="in-cuidado" type="textarea" class="form-control" id="first-name-field" placeholder="Descripción" required>
+                                </div>
+                            </div>
+                            <div class="row pt-4">
+                                <button class="btn btn-morado col-sm-3" type="submit">Registrar</button>
+                            </div>
+                        </form>
+                    </div>
+                    <div id="opc4" class="container tab-pane fade"><br>
+                        <p>Mostrar cuidados especiales</p>
+                        <table class="table table-striped">
+                            <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Descripción</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for cuidado in cuidados %}
+                                <tr>
+                                <td>{{ cuidado[0] }}</td>
+                                <td>{{ cuidado[1] }}</td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+            </div>
+        </div>
 
     </main>
 
@@ -97,6 +339,105 @@
 
     <script src="/static/node_modules/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <script src="/static/node_modules/jquery/dist/jquery.slim.js"></script>
+    <script type="text/javascript">
+        let tabActiva = 1;
+        $("#btp1").addClass("text-white bg-morado");
+        for (var i = 2; i < 4; i++) {
+            $("#btp"+i).addClass("text-morado");
+        }
+
+        $("#btp1").on("click", function() {
+            $("#btp"+tabActiva).removeClass("text-white bg-morado");
+            $("#btp"+tabActiva).addClass("text-morado");
+            tabActiva = 1;
+            $("#btp"+tabActiva).removeClass("text-morado");
+            $("#btp"+tabActiva).addClass("text-white bg-morado");
+        });
+
+        $("#btp2").on("click", function() {
+            $("#btp"+tabActiva).removeClass("text-white bg-morado");
+            $("#btp"+tabActiva).addClass("text-morado");
+            tabActiva = 2;
+            $("#btp"+tabActiva).removeClass("text-morado");
+            $("#btp"+tabActiva).addClass("text-white bg-morado");
+        });
+        
+        $("#btp3").on("click", function() {
+            $("#btp"+tabActiva).removeClass("text-white bg-morado");
+            $("#btp"+tabActiva).addClass("text-morado");
+            tabActiva = 3;
+            $("#btp"+tabActiva).removeClass("text-morado");
+            $("#btp"+tabActiva).addClass("text-white bg-morado");
+        });
+    
+        let tabActiva2 = 1;
+        $("#btc1").addClass("text-white bg-morado");
+        for (var i = 2; i <= 4; i++) {
+            $("#btc"+i).addClass("text-morado");
+        }
+
+        $("#btc1").on("click", function() {
+            $("#btc"+tabActiva2).removeClass("text-white bg-morado");
+            $("#btc"+tabActiva2).addClass("text-morado");
+            tabActiva2 = 1;
+            $("#btc"+tabActiva2).removeClass("text-morado");
+            $("#btc"+tabActiva2).addClass("text-white bg-morado");
+        });
+
+        $("#btc2").on("click", function() {
+            $("#btc"+tabActiva2).removeClass("text-white bg-morado");
+            $("#btc"+tabActiva2).addClass("text-morado");
+            tabActiva2 = 2;
+            $("#btc"+tabActiva2).removeClass("text-morado");
+            $("#btc"+tabActiva2).addClass("text-white bg-morado");
+        });
+        
+        $("#btc3").on("click", function() {
+            $("#btc"+tabActiva2).removeClass("text-white bg-morado");
+            $("#btc"+tabActiva2).addClass("text-morado");
+            tabActiva2 = 3;
+            $("#btc"+tabActiva2).removeClass("text-morado");
+            $("#btc"+tabActiva2).addClass("text-white bg-morado");
+        });
+
+        $("#btc4").on("click", function() {
+            $("#btc"+tabActiva2).removeClass("text-white bg-morado");
+            $("#btc"+tabActiva2).addClass("text-morado");
+            tabActiva2 = 4;
+            $("#btc"+tabActiva2).removeClass("text-morado");
+            $("#btc"+tabActiva2).addClass("text-white bg-morado");
+        });
+
+        function cerrarModal() {
+                $("#cliente_existente").modal("toggle");
+                $("#cliente_invalido").modal("toggle");
+        };
+
+        const xHTTP = new XMLHttpRequest();
+        bandera = false;
+
+        xHTTP.onreadystatechange = function() {
+                if (this.readyState == 4 && this.status == 200) {
+                    validado = JSON.parse(xHTTP.responseText)["validado"]
+                    if (validado != "") {
+                        $("#cliente_invalido").modal("toggle");
+                        $("#cliente_existente").modal("toggle");
+                    } else {
+                        bandera = true;
+                    }
+                }
+            }
+            
+        $("#form-nuevo").on("submit", function() {
+            url = "http://localhost:5000/val_usuario/" + $("#email-field").val();
+            xHTTP.open("GET", url, false);
+            xHTTP.send();
+            if (!bandera) {
+                return false;
+            }
+        });    
+
+    </script>
 </body>
 </html>
 

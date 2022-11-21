@@ -1,0 +1,256 @@
+<!--<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/js/bootstrap.bundle.min.js"></script>
+    <title>Document</title>
+</head>
+
+<body style="background-color: ivory;">
+    <section class="container">
+        <h3 class="pt-4 pb-2">Bootstrap Datetimepicker</h3>
+        <form id="myForm">
+            <div class="row form-group">
+                <label for="date" class="col-sm-1 col-form-label">Date</label>
+                <div class="col-sm-4">
+                    <div class="input-group date">
+                        <input type="date" id="fecha">
+                    </div>
+
+                </div>
+            </div>
+
+            <div class="row form-group">
+
+                <div class="input-group">
+                    <label for="date" class="col-sm-1 col-form-label">Medico</label>
+                    <select class="custom-select" id="inputGroupSelect04" name="doctor">
+                        {% for auto in Autos %}
+                            <option>{{ auto[0]|string + " - " + auto[1] + " "+ auto[2]+" "+auto[3] }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <button class="btn btn-outline-secondary" type="submit">Button</button>
+            </div>
+            <div id="contenedor-botones"></div>
+        </form>
+    </section>
+    
+    <script type="text/javascript">
+        let fecha=document.getElementById('fecha');
+        let doctor=document.getElementById('inputGroupSelect04');
+        let f=document.getElementById('myForm');
+        const HTTP = new XMLHttpRequest();
+            
+        HTTP.onreadystatechange = function() {
+            if (this.readyState == 4 && this.status == 200) {
+                $("#contenedor-botones").empty();
+                horas = JSON.parse(HTTP.responseText)["horas"]
+                console.log(horas);
+                for (i=0; i<horas.length; i++){
+                    boton = document.createElement("button");
+                    boton.innerText = horas[i];
+                    boton.classList.add("btn-morado");
+                    $("#contenedor-botones").append(boton);
+                }       
+            }
+        }
+
+        f.onsubmit=function(){
+            url="http://localhost:5000/buscar/"+fecha.value+"&"+doctor.value;
+            HTTP.open("GET", url);
+            HTTP.send();
+            return false;
+        }
+            
+        </script>
+    </body>
+</html>-->
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="/static/css/custom.css">
+    <link rel="stylesheet" href="/static/css/custom.css.map">
+    <title>Citas Arte Dental</title>
+</head>
+<body>
+    <header class="">
+        <nav class="px-5 navbar navbar-expand-sm bg-white fixed-top">
+            <div class="container-fluid">
+                <!--LOGO-->
+                <a class="navbar-brand" href='/'>
+                    <img src="/static/images/arte dental logo.png">
+                </a>
+                <!--LINKS-->
+                <ul class="row nav navbar-nav justify-content-end">
+                    <li class="col nav-item">
+                        <a class="text-moradofiusa nav-link" href='/'>
+                            <h3>Inicio</h3>
+                        </a>
+                    </li>               
+                    <li class="col nav-item">
+                        <a class="text-moradofiusa nav-link" href="/conocenos">
+                            <h3>Conócenos</h3>
+                        </a>
+                    </li>
+                    <li class="col nav-item">
+                        <a class="text-moradofiusa nav-link" href="/servicios">
+                            <h3>Servicios</h3>
+                        </a>
+                    </li>
+                    <li class="col nav-item">
+                        <a class="text-moradofiusa nav-link" href="/sucursales">
+                            <h3>Sucursales</h3>
+                        </a>
+                    </li>
+                    <li class="col nav-item">
+                        <a class="btn btn-morado navbar-btn" href="/agendar" style="box-shadow: 1px 3px 3px rgb(0,0,0,0.4);">
+                            <h3>Agendar</h3>
+                        </a> 
+                    </li>
+                </ul>
+            </div>
+        </nav>
+        <hr class="" style="height:50px; border-width:0; color:gray; background-color:blue">
+    </header>
+    <hr class="" style="height:30px; opacity: 1; background-color: #6600A1">
+    
+    <main class="px-5">
+        <div class="container bg-moradoopacidad my-5 pb-5 col-sm-6 rounded-5" >
+            <div class="pb-2 pt-4">
+                <h1 class="text-center">Agendar Cita</h1>
+                <form id="form-agendar" action="/registrar_cita" method="POST">
+                    <div class="col-sm-6 mx-auto pt-4">
+                        <div class="row">
+                            <label>Fecha</label>
+                            <input type="date" class="form-control" id="fecha" name="fecha"required>
+                        </div>
+                        <div class="row">
+                            <label>Medico</label>
+                            <select class="form-control" id="inputGroupSelect04" name="doctor" required>
+                                <option disabled selected>Selecciona un Dentista</option>
+                                {% for auto in Autos %}
+                                <option>{{ auto[0]|string + " - " + auto[1] + " "+ auto[2]+" "+auto[3] }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div class="row">
+                            <label>Servicio</label>
+                            <select class="form-control" id="inputGroupSelect05" name="servicio" required>
+                                <option disabled selected>Selecciona un servicio</option>
+                                {% for servicios in Servicios %}
+                                <option>{{ servicios[0]|string + " - " + servicios[1] }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div class="row justify-content-center pt-4">
+                            <button class="btn btn-moradofiusaopacidad" type="submit">Horarios</button>
+                        </div>
+                        <div class="row my-3">
+                            <select class="form-control" id="select-horario" name="horario" required>
+                                <option disabled selected>Selecciona una horario</option>
+                            </select>
+                        </div>
+                        <div class="row justify-content-center pt-4">
+                            <button class="btn btn-morado" type="submit">Agendar</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </main>
+
+    <div class="modal fade" id="no-horarios" tabindex="-1" role="dialog" aria-labelledby="no-horarios" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="no_horarios_title">¡No hay horarios disponibles!</h5>
+                </div>
+                <div class="modal-body">
+                    No pudimos encontrar horarios disponibles que cumplieran con tus requisitos, te solicitamos inetentes con otros parámetros
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary btn-morado" onclick="cerrarModal()">Entendido</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <hr class="" style="height:10px; opacity: 1; background-color: #6600A1">
+    <!--FOOTER-->
+    <footer class="">
+        <nav class="px-5 navbar sticky-bottom bg-white">
+            <div class="container-fluid">
+                <!--LOGO FOOTER-->
+                <a class="col-sm-3 navbar-brand" href="/">
+                    <img src="/static/images/arte dental logo.png" alt="arte dental" width="" height="">
+                </a>
+                <!--1ERA COLUMNA-->
+                <div class="col-sm-3 nav-item">
+                    <a class="row navbar-brand" href="#">Términos y condiciones</a>
+                    <a class="row navbar-brand" href="#">Aviso de privacidad</a>
+                </div>
+                <!--2DA COLUMNA-->
+                <div class="col pt-1 nav-item">
+                    <a class="row pb-5 navbar-brand" href="#">Contacto</a>
+                </div>
+            </div>
+        </nav>
+    </footer>
+
+    <script src="/static/node_modules/jquery/dist/jquery.slim.js"></script>
+    <script src="/static/node_modules/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script type="text/javascript">
+        let fecha=document.getElementById('fecha');
+        let doctor=document.getElementById('inputGroupSelect04');
+        let f=document.getElementById('form-agendar');
+        let s=document.getElementById('inputGroupSelect05');
+        const HTTP = new XMLHttpRequest();
+            
+        HTTP.onreadystatechange = function() {
+            if (this.readyState == 4 && this.status == 200) {
+                horas = JSON.parse(HTTP.responseText)["horas"]
+                if(horas.length==0){
+                    $("#no-horarios").modal("toggle");
+                }else{
+                    option = document.createElement("option");
+                    option.selected = true;
+                    option.disabled = true;
+                    option.innerText = "Selecciona una horario";
+                    $("#select-horario").empty();
+                    $("#select-horario").append(option);
+                    for (i=0; i<horas.length; i++){
+                        option = document.createElement("option");
+                        option.innerText = horas[i];
+                        $("#select-horario").append(option);
+                    }
+                }
+            }
+        }
+
+        f.onsubmit=function(){
+            if ($("#select-horario").val() == null) {
+                url="http://localhost:5000/buscar/"+fecha.value+"&"+doctor.value+"&"+s.value;
+                HTTP.open("GET", url);
+                HTTP.send();
+                return false;
+            }
+            let cid = $("input").attr("type", "hidden").attr("name", "id_cliente").val("{{id}}");
+            $("#form-agendar").append(cid);
+        }
+
+        function cerrarModal() {
+            $("#no-horarios").modal("toggle");
+        }
+    </script>
+</body>
+</html>

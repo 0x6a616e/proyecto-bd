@@ -1,0 +1,1 @@
+INSERT INTO clinicas (clid, direccion, nombre, telefono) VALUES (1, 'Sucursal Santa Catarina C. José María Morelos 108, Col. Ixtlera, Santa Catarina, N. L.', 'Arte Dental', '8118241906');

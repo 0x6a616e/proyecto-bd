@@ -1,0 +1,75 @@
+@import "../static/node_modules/bootstrap/scss/_functions";
+@import "../static/node_modules/bootstrap/scss/_variables";
+
+$artedental: (
+  "morado":           #6600A1,
+  "moradoopacidad":   #B280D0,
+  "moradofiusa":      #C261D7,
+  "moradofiusaopacidad": #884B7F,
+  "gris":             #373435,
+  "grisopaco":        #9B999A  
+);
+
+$theme-colors: map-merge($theme-colors, $artedental);
+
+@import "../static/node_modules/bootstrap/scss/bootstrap";
+
+@import url("https://fonts.googleapis.com/css2?family=K2D&family=Nobile&display=swap");
+
+body{
+  font-family: 'K2D', sans-serif;
+  font-size: 24px;
+  background-color: white;
+  h1 {
+    font-family: 'Nobile', sans-serif;
+    font-size: 60px;
+  }
+  h2 {
+    font-family: 'Nobile', sans-serif;
+    font-size: 40px;
+  }
+  h3 {
+    font-family: 'Nobile', sans-serif;
+    font-size: 24px;
+    text-shadow: 1px 2px 2px rgb(0,0,0,0.4);
+  }
+  p {
+    font-family: 'K2D', sans-serif;
+    font-size: 18px;
+  }
+  li {
+    font-family: 'K2D', sans-serif;
+    font-size: 18px;
+  }
+  td {
+    font-family: 'Nobile', sans-serif;
+    font-size: 18px;
+  }
+  thead {
+    font-family: 'Nobile', sans-serif;
+    font-size: 20px;
+  }
+
+}
+
+/*
+:root {
+  --bs-body-font-family: 'Nobile', sans-serif;
+}
+
+$primary: #6600A1;
+
+
+$morado: #6600A1 !default;
+$moradoopacidad: #B280D0 !default;
+$moradofiusa: #C261D7 !default;
+$gris: #373435 !default;
+$grisopaco: #9B999A !default;  
+
+"morado": $morado,
+  "moradoopacidad": $moradoopacidad,
+  "moradofiusa": $moradofiusa,
+  "gris": $gris,
+  "grisopaco": $grisopaco
+
+*/

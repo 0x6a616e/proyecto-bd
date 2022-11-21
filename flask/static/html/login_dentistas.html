@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="/static/css/custom.css">
+    <link rel="stylesheet" href="/static/css/custom.css.map">
+    <title>Login Dentistas Arte Dental</title>
+</head>
+<!--style="padding-bottom: 70px;"-->
+<body >
+    <header class="">
+        <nav class="px-5 navbar navbar-expand-sm bg-white fixed-top">
+            <div class="container-fluid">
+                <!--LOGO-->
+                <a class="navbar-brand" href='/'>
+                    <img src="/static/images/arte dental logo.png">
+                </a>
+                <!--LINKS-->
+                <ul class="row nav navbar-nav justify-content-end">
+                    <li class="col nav-item">
+                        <a class="text-moradofiusa nav-link" href='/'>
+                            <h3>Inicio</h3>
+                        </a>
+                    </li>               
+                    <li class="col nav-item">
+                        <a class="text-moradofiusa nav-link" href="/conocenos">
+                            <h3>Conócenos</h3>
+                        </a>
+                    </li>
+                    <li class="col nav-item">
+                        <a class="text-moradofiusa nav-link" href="/servicios">
+                            <h3>Servicios</h3>
+                        </a>
+                    </li>
+                    <li class="col nav-item">
+                        <a class="text-moradofiusa nav-link" href="/sucursales">
+                            <h3>Sucursales</h3>
+                        </a>
+                    </li>
+                    <li class="col nav-item">
+                        <a class="btn btn-morado navbar-btn" href="/agendar" style="box-shadow: 1px 3px 3px rgb(0,0,0,0.4);">
+                            <h3>Agendar</h3>
+                        </a> 
+                    </li>
+                </ul>
+            </div>
+        </nav>
+        <hr class="" style="height:50px; border-width:0; color:gray; background-color:blue">
+    </header>
+    <hr class="" style="height:30px; opacity: 1; background-color: #6600A1">
+    
+    <main class="px-5">
+        <h1 class="text-center">Login</h1>
+        <div class="">
+            <form id="form-dentista" class="" action="https://carlsjr.com.mx/">
+                <div class="col-sm-3 mx-auto pt-4">
+                    <div class="row">
+                        <label>Usuario</label>
+                        <input type="text" class="form-control" id="user-field" required>
+                    </div>
+                    <div class="row">
+                        <label>Contraseña</label>
+                        <input type="text" class="form-control" id="pass-field" required>
+                    </div>
+                </div>
+                <div class="row justify-content-center pt-4">
+                    <button class="btn btn-morado col-sm-3" type="submit">Iniciar sesión</button>
+                </div>
+            </form>
+        </div>
+    </main>
+
+    <hr class="" style="height:10px; opacity: 1; background-color: #6600A1">
+    <!--FOOTER-->
+    <footer class="">
+        <nav class="px-5 navbar sticky-bottom bg-white">
+            <div class="container-fluid">
+                <!--LOGO FOOTER-->
+                <a class="col-sm-3 navbar-brand" href="/">
+                    <img src="/static/images/arte dental logo.png" alt="arte dental" width="" height="">
+                </a>
+                <!--1ERA COLUMNA-->
+                <div class="col-sm-3 nav-item">
+                    <a class="row navbar-brand" href="#">Términos y condiciones</a>
+                    <a class="row navbar-brand" href="#">Aviso de privacidad</a>
+                </div>
+                <!--2DA COLUMNA-->
+                <div class="col pt-1 nav-item">
+                    <a class="row pb-5 navbar-brand" href="#">Contacto</a>
+                </div>
+            </div>
+        </nav>
+    </footer>
+
+    <div class="modal fade" id="usuario_invalido" tabindex="-1" role="dialog" aria-labelledby="usuario_invalido" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="usuario_invalido_titulo">Incorrecto</h5>
+                </div>
+                <div class="modal-body">
+                    El usuario o contraseña que ingresaste es incorrecto, revísalo por posibles errores o contacta con el administrador
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary btn-morado" onclick="cerrarModal()">Entendido</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="/static/node_modules/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="/static/node_modules/jquery/dist/jquery.slim.js"></script>
+    <script>
+        const xHTTP = new XMLHttpRequest();
+        bandera = false;
+
+        function cerrarModal() {
+            $("#usuario_invalido").modal("toggle");
+        };
+                
+        xHTTP.onreadystatechange = function() {
+            if (this.readyState == 4 && this.status == 200) {
+                validado = JSON.parse(xHTTP.responseText)["validado"]
+                if (!validado) {
+                    $("#usuario_invalido").modal("toggle");
+                } else {
+                    bandera = true;
+                    // console.log(validado);
+                    // id = validado;
+                    // window.location.href = "http://localhost:5000/cita/" + id;
+                    // window.location.href = "https://carlsjr.com.mx/";
+                }
+            }
+        }
+
+        $("#form-dentista").on("submit", function() {
+            url = "http://localhost:5000/val_dentista/" + $("#user-field").val() + "&" + $("#pass-field").val();
+            xHTTP.open("GET", url, false);
+            xHTTP.send();
+            if (!bandera) {
+                return false;
+            }
+        });
+        </script>
+</body>
+</html>

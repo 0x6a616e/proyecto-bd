@@ -1,0 +1,15 @@
+INSERT INTO cuidados_especiales (ceid, descripcion) VALUES (1, 'Alergia al polen, causa problemas como conjuntivitis, fiebre del heno o asma.');
+INSERT INTO cuidados_especiales (ceid, descripcion) VALUES (2, 'Monitor cardíaco');
+INSERT INTO cuidados_especiales (ceid, descripcion) VALUES (3, 'Ventiladores mecánicos para ayudar a la respiracion');
+INSERT INTO cuidados_especiales (ceid, descripcion) VALUES (4, 'Anemia');
+INSERT INTO cuidados_especiales (ceid, descripcion) VALUES (5, 'Gingivitis');
+INSERT INTO cuidados_especiales (ceid, descripcion) VALUES (6, 'Caries');
+INSERT INTO cuidados_especiales (ceid, descripcion) VALUES (7, 'Periodontitis');
+INSERT INTO cuidados_especiales (ceid, descripcion) VALUES (8, 'Halitosis');
+INSERT INTO cuidados_especiales (ceid, descripcion) VALUES (9, 'Aftas');
+INSERT INTO cuidados_especiales (ceid, descripcion) VALUES (10, 'Herpes labial');
+INSERT INTO cuidados_especiales (ceid, descripcion) VALUES (11, 'Cancer Oral');
+INSERT INTO cuidados_especiales (ceid, descripcion) VALUES (12, 'Ulcerals Bucales');
+INSERT INTO cuidados_especiales (ceid, descripcion) VALUES (13, 'Erosion dental');
+INSERT INTO cuidados_especiales (ceid, descripcion) VALUES (14, 'Sensibilidad dental');
+INSERT INTO cuidados_especiales (ceid, descripcion) VALUES (15, 'Traumatismos dentales');

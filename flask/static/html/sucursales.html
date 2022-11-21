@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="/static/css/custom.css">
+    <link rel="stylesheet" href="/static/css/custom.css.map">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.3/dist/leaflet.css" integrity="sha256-kLaT2GOSpHechhsozzB+flnD+zUyjE2LlfWPgU04xyI=" crossorigin=""/>
+    <style>
+        #map { height: 500px; width: 1000px;}
+    </style>
+    <title>Sucursales Arte Dental</title>
+</head>
+<body >
+    <header class="">
+        <nav class="px-5 navbar navbar-expand-sm bg-white fixed-top">
+            <div class="container-fluid">
+                <!--LOGO-->
+                <a class="navbar-brand" href='/'>
+                    <img src="/static/images/arte dental logo.png">
+                </a>
+                <!--LINKS-->
+                <ul class="row nav navbar-nav justify-content-end">
+                    <li class="col nav-item">
+                        <a class="text-moradofiusa nav-link" href='/'>
+                            <h3>Inicio</h3>
+                        </a>
+                    </li>               
+                    <li class="col nav-item">
+                        <a class="text-moradofiusa nav-link" href='/conocenos'>
+                            <h3>Conócenos</h3>
+                        </a>
+                    </li>
+                    <li class="col nav-item">
+                        <a class="text-moradofiusa nav-link" href='/servicios'>
+                            <h3>Servicios</h3>
+                        </a>
+                    </li>
+                    <li class="col nav-item">
+                        <a class="text-moradofiusa nav-link" href='/sucursales'>
+                            <h3>Sucursales</h3>
+                        </a>
+                    </li>
+                    <li class="col nav-item">
+                        <a class="btn btn-morado navbar-btn" href="/agendar" style="box-shadow: 1px 3px 3px rgb(0,0,0,0.4);">
+                            <h3>Agendar</h3>
+                        </a> 
+                    </li>
+                </ul>
+            </div>
+        </nav>
+        <hr class="" style="height:50px; border-width:0; color:gray; background-color:blue">
+    </header>
+    <hr class="" style="height:30px; opacity: 1; background-color: #6600A1">
+    
+    <main class="px-5">
+        <h1 class="text-center">Sucursales</h1>
+        <!--MAPA-->
+        <div class="container-fluid" id="map">
+
+        </div>
+        <script src="https://unpkg.com/leaflet@1.9.3/dist/leaflet.js"
+        integrity="sha256-WBkoXOwTeyKclOHuWtc+i2uENFpDZ9YPdf5Hf+D7ewM="
+        crossorigin=""></script>
+
+    </main>
+
+    <hr class="" style="height:10px; opacity: 1; background-color: #6600A1">
+    <!--FOOTER-->
+    <footer class="">
+        <nav class="px-5 navbar sticky-bottom bg-white">
+            <div class="container-fluid">
+                <!--LOGO FOOTER-->
+                <a class="col-sm-3 navbar-brand" href="/">
+                    <img src="/static/images/arte dental logo.png" alt="arte dental" width="" height="">
+                </a>
+                <!--1ERA COLUMNA-->
+                <div class="col-sm-3 nav-item">
+                    <a class="row navbar-brand" href="#">Términos y condiciones</a>
+                    <a class="row navbar-brand" href="#">Aviso de privacidad</a>
+                </div>
+                <!--2DA COLUMNA-->
+                <div class="col pt-1 nav-item">
+                    <a class="row pb-5 navbar-brand" href="#">Contacto</a>
+                </div>
+            </div>
+        </nav>
+    </footer>
+
+    <script src="/static/node_modules/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        var greenIcon = L.icon({
+            iconUrl: '/static/images/diente.png',
+            iconSize:     [38, 38], // size of the icon
+            iconAnchor:   [15, 0], // point of the icon which will correspond to marker's location
+        });
+
+        var map = L.map('map').setView([25.67344164028398, -100.46522217313313], 25);
+
+
+        L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
+        }).addTo(map);
+
+        var marker = L.marker([25.67344164028398, -100.46522217313313], {icon: greenIcon}).addTo(map).bindPopup('Sucursal Santa Catarina C. José María Morelos 108, Col. Ixtlera, Santa Catarina, N. L..')
+        .openPopup();;
+    </script>
+</body>
+</html>

@@ -1,0 +1,10 @@
+INSERT INTO ce_pac (pid, ceid) VALUES (45, 1);
+INSERT INTO ce_pac (pid, ceid) VALUES (74, 5);
+INSERT INTO ce_pac (pid, ceid) VALUES (2, 2);
+INSERT INTO ce_pac (pid, ceid) VALUES (35, 1);
+INSERT INTO ce_pac (pid, ceid) VALUES (3, 11);
+INSERT INTO ce_pac (pid, ceid) VALUES (7, 9);
+INSERT INTO ce_pac (pid, ceid) VALUES (12, 13);
+INSERT INTO ce_pac (pid, ceid) VALUES (15, 10);
+INSERT INTO ce_pac (pid, ceid) VALUES (65, 8);
+INSERT INTO ce_pac (pid, ceid) VALUES (25, 6);

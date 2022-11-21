@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="/static/css/custom.css">
+    <link rel="stylesheet" href="/static/css/custom.css.map">
+    <title>Servicios Arte Dental</title>
+</head>
+<body >
+    <header class="">
+        <nav class="px-5 navbar navbar-expand-sm bg-white fixed-top">
+            <div class="container-fluid">
+                <!--LOGO-->
+                <a class="navbar-brand" href='/'>
+                    <img src="/static/images/arte dental logo.png">
+                </a>
+                <!--LINKS-->
+                <ul class="row nav navbar-nav justify-content-end">
+                    <li class="col nav-item">
+                        <a class="text-moradofiusa nav-link" href='/'>
+                            <h3>Inicio</h3>
+                        </a>
+                    </li>               
+                    <li class="col nav-item">
+                        <a class="text-moradofiusa nav-link" href="/conocenos">
+                            <h3>Conócenos</h3>
+                        </a>
+                    </li>
+                    <li class="col nav-item">
+                        <a class="text-moradofiusa nav-link" href="/servicios">
+                            <h3>Servicios</h3>
+                        </a>
+                    </li>
+                    <li class="col nav-item">
+                        <a class="text-moradofiusa nav-link" href="/sucursales">
+                            <h3>Sucursales</h3>
+                        </a>
+                    </li>
+                    <li class="col nav-item">
+                        <a class="btn btn-morado navbar-btn" href="/agendar" style="box-shadow: 1px 3px 3px rgb(0,0,0,0.4);">
+                            <h3>Agendar</h3>
+                        </a> 
+                    </li>
+                </ul>
+            </div>
+        </nav>
+        <hr class="" style="height:50px; border-width:0; color:gray; background-color:blue">
+    </header>
+    <hr class="" style="height:30px; opacity: 1; background-color: #6600A1">
+    
+    <main class="px-5">
+        <h1 class="text-center">Servicios</h1>
+
+        <!--CONSULTA GENERAL-->
+        <div class="row my-5">
+            <img class="col-sm-6 image-fluid" src="/static/images/sg1.svg" >
+            <div class="col-sm-6 px-5">
+                <h2> {{ general[0][0] }} </h2>
+                <p class="text-justify">
+                    {{ general[0][1] }}
+                </p>
+            </div>
+        </div>
+
+        <div  id="categorias" class="row my-5">
+            <!--FILTRO DE BOTONES-->
+            <p class="row border border-morado" >
+                <p class="col">
+                    Filtrar procedimientos por:
+                </p>
+                <button onclick="est()" id="estetica" class="col btn" type="button" data-bs-toggle="collapse" data-bs-target="#contenido1" aria-expanded="false" aria-controls="contenido1">
+                    Estética
+                </button>
+                <button onclick="sal()" id="salud" class="col btn" type="button" data-bs-toggle="collapse" data-bs-target="#contenido2" aria-expanded="false" aria-controls="contenido2">
+                    Salud
+                </button>
+            </p>
+            <!--PROCEDIMIENTOS POR ESTÉTICA-->
+            <div class="collapse" id="contenido1" data-bs-parent="#categorias">
+                <h1 id="procedimientosE">Procedimientos Estéticos</h1>
+                <!--SERVICIO E IMAGEN-->
+                {% for servicio in e_services %}
+                <div class="row my-5">
+                    <div class="col-sm-6 ">
+                        <h2> {{ servicio[0] }} </h2>
+                        <p class="text-justify">
+                            {{ servicio[1] }}
+                        </p>
+                    </div>
+                    <img class="col-sm-6 image-fluid" src="/static/images/se{{servicio[2]}}.svg" >
+                </div>
+                {% endfor %}
+            </div>
+            <!--PROCEDIMIENTOS POR SALUD-->
+            <div class="collapse" id="contenido2" data-bs-parent="#categorias">
+                <h1 id="procedimientosS">Procedimientos por Salud</h1>
+                <!--SERVICIO E IMAGEN-->
+                {% for servicio in s_services %}
+                <div class="row my-5">
+                    <div class="col-sm-6 ">
+                        <h2> {{ servicio[0] }} </h2>
+                        <p class="text-justify">
+                            {{ servicio[1] }}
+                        </p>
+                    </div>
+                    <img class="col-sm-6 image-fluid" src="/static/images/ss{{servicio[2]}}.svg" >
+                </div>
+                {% endfor %}
+            </div> 
+        </div>
+    </main>
+
+    <hr class="" style="height:10px; opacity: 1; background-color: #6600A1">
+    <!--FOOTER-->
+    <footer class="">
+        <nav class="px-5 navbar sticky-bottom bg-white">
+            <div class="container-fluid">
+                <!--LOGO FOOTER-->
+                <a class="col-sm-3 navbar-brand" href="/">
+                    <img src="/static/images/arte dental logo.png" alt="arte dental" width="" height="">
+                </a>
+                <!--1ERA COLUMNA-->
+                <div class="col-sm-3 nav-item">
+                    <a class="row navbar-brand" href="#">Términos y condiciones</a>
+                    <a class="row navbar-brand" href="#">Aviso de privacidad</a>
+                </div>
+                <!--2DA COLUMNA-->
+                <div class="col pt-1 nav-item">
+                    <a class="row pb-5 navbar-brand" href="#">Contacto</a>
+                </div>
+            </div>
+        </nav>
+    </footer>
+
+    <script src="/static/node_modules/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        estetica = document.getElementById("estetica");
+        salud = document.getElementById("salud");
+
+        estetica.classList.add("bg-moradofiusaopacidad");
+        estetica.classList.add("text-white");
+
+        salud.classList.add("bg-moradoopacidad");
+        salud.classList.add("text-black");
+
+        function est() {
+            estetica.classList.remove("bg-moradoopacidad");
+            estetica.classList.remove("text-black");
+            estetica.classList.add("bg-moradofiusaopacidad");
+            estetica.classList.add("text-white");
+
+            salud.classList.remove("bg-moradofiusaopacidad");
+            salud.classList.remove("text-white");
+            salud.classList.add("text-black");
+            salud.classList.add("bg-moradoopacidad");
+        }
+        
+        function sal() {
+            estetica.classList.remove("bg-moradofiusaopacidad");
+            estetica.classList.remove("text-white");
+            estetica.classList.add("text-black");
+            estetica.classList.add("bg-moradoopacidad");
+
+            salud.classList.remove("bg-moradoopacidad");
+            salud.classList.remove("text-black");
+            salud.classList.add("bg-moradofiusaopacidad");
+            salud.classList.add("text-white");
+        }
+
+    </script>
+</body>
+</html>

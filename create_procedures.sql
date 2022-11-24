@@ -155,13 +155,6 @@ SELECT *
 FROM clinicas;
 END //
 
-DROP PROCEDURE IF EXISTS show_dentists_offices //
-CREATE PROCEDURE show_dentists_offices()
-BEGIN
-SELECT *
-FROM den_clin;
-END //
-
 DROP PROCEDURE IF EXISTS show_dentists_status //
 CREATE PROCEDURE show_dentists_status()
 BEGIN
@@ -186,7 +179,7 @@ END //
 DROP PROCEDURE IF EXISTS show_services //
 CREATE PROCEDURE show_services()
 BEGIN
-SELECT *
+SELECT serid, nombreServicio, descripcion, duracion, CAST(esBasico AS UNSIGNED) AS esBasico, categoria
 FROM servicios;
 END //
 

@@ -5,4 +5,4 @@ insert into servicios (serid, nombreServicio, descripcion, duracion, esBasico, c
 insert into servicios (serid, nombreServicio, descripcion, duracion, esBasico, categoria) values (5, 'Implantes', 'Contamos con los medios necesarios para proveer nuevas oportunidades a tu boca.', 3, 0, 'Salud');
 insert into servicios (serid, nombreServicio, descripcion, duracion, esBasico, categoria) values (6, 'Extracciones', 'Para evitar complicaciones mayores, puede ser preciso remover piezas bucales.', 2, 0, 'Salud');
 insert into servicios (serid, nombreServicio, descripcion, duracion, esBasico, categoria) values (7, 'Corona dental', 'Como esculpir una estatua, podemos generar una nueva pieza según tu caso.', 3, 0, 'Salud');
-insert into servicios (serid, nombreServicio, descripcion, duracion, esBasico, categoria) values (8, 'Consulta general', 'Revisión y diagnóstico.', 1, 1, 'Estético');
+insert into servicios (serid, nombreServicio, descripcion, duracion, esBasico, categoria) values (8, 'Consulta general', 'Revisión y diagnóstico.', 1, 1, 'General');

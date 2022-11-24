@@ -1,10 +1,38 @@
+import datetime
+import hashlib
 from os import getenv
-from flask import Flask, render_template, current_app, jsonify, request, redirect
+from flask import Flask, render_template, current_app, jsonify, request, redirect, session
 from flaskext.mysql import MySQL
 from werkzeug.security import check_password_hash, generate_password_hash
 
 app = Flask(__name__)
+app.secret_key = getenv("FLASK_SECRET_KEY")
 mysql = MySQL(app, host = "localhost", user = getenv("DB_USER"), password = getenv("DB_PASSWORD"), db = getenv("DB_NAME"))
+
+def authenticate():
+        try:
+                user = session["user"]
+                exp = session["exp"]
+                signature = session["signature"]
+                if datetime.date.today() > datetime.datetime.strptime(exp, "%Y-%m-%d").date():
+                        log_off()
+                        return False
+                signature2 = user + exp + getenv("FLASK_SALT")
+                signature2 = hashlib.sha256(signature2.encode())
+                signature2 = signature2.hexdigest()
+                if (signature != signature2):
+                        log_off()
+                        return False
+                return True
+        except:
+                return False
+
+@app.route("/log_off", methods = [ "GET" ])
+def log_off():
+        session.pop("user", default = None)
+        session.pop("exp", default = None)
+        session.pop("signature", default = None)
+        return index()
 
 @app.route('/', methods = [ "GET" ])
 def index():
@@ -51,6 +79,13 @@ def val_dentista(usuario, contrasenia):
                 if (check_password_hash(valido[0], contrasenia)):
                         # id = 1 => 17092001 => 0xabcf3
                         response = jsonify(validado = True)
+                        session["user"] = usuario
+                        exp_date = (datetime.datetime.now() + datetime.timedelta(days = 2)).strftime("%Y-%m-%d")
+                        session["exp"] = exp_date
+                        signature = usuario + exp_date + getenv("FLASK_SALT")
+                        signature = hashlib.sha256(signature.encode())
+                        signature = signature.hexdigest()
+                        session["signature"] = signature
                 else:
                         response = jsonify(validado = False)
 
@@ -71,308 +106,358 @@ def val_usuario(correo):
         cursor.close()
         return response
 
-@app.route("/menu_admin", methods = [ "GET" ])
-def menu_admin():
-        return current_app.send_static_file("html/menu_admin.html")
-
 ### RUTAS DE ADMNISTRADOR A SITIOS
 
 @app.route("/admin_pacientes", methods = [ "GET" ])
 def admin_pacientes():
-        cursor = mysql.get_db().cursor()
-        cursor.execute("CALL show_patients()")
-        pacientes = cursor.fetchall()
-        #pacientes = [ list(pacientes[i]) + [ i + 1 ] for i in range(len(pacientes)) ]
-        cursor.execute("CALL show_cares()")
-        cuidados = cursor.fetchall()
-        #cuidados = [ list(cuidados[i]) + [ i + 1 ] for i in range(len(cuidados)) ]
-        cursor.execute("CALL show_patients_cares()")
-        ce_pac = cursor.fetchall()
-        #ce_pac = [ list(ce_pac[i]) + [ i + 1 ] for i in range(len(ce_pac)) ]
-        cursor.close()
-        return render_template("admin_pacientes.html", pacientes = pacientes, cuidados = cuidados, ce_pac = ce_pac)
+        if authenticate():
+                cursor = mysql.get_db().cursor()
+                cursor.execute("CALL show_patients()")
+                pacientes = cursor.fetchall()
+                #pacientes = [ list(pacientes[i]) + [ i + 1 ] for i in range(len(pacientes)) ]
+                cursor.execute("CALL show_cares()")
+                cuidados = cursor.fetchall()
+                #cuidados = [ list(cuidados[i]) + [ i + 1 ] for i in range(len(cuidados)) ]
+                cursor.execute("CALL show_patients_cares()")
+                ce_pac = cursor.fetchall()
+                #ce_pac = [ list(ce_pac[i]) + [ i + 1 ] for i in range(len(ce_pac)) ]
+                cursor.close()
+                return render_template("admin_pacientes.html", pacientes = pacientes, cuidados = cuidados, ce_pac = ce_pac)
+        return index()
 
 @app.route("/admin_sucursales", methods = [ "GET" ])
 def admin_sucursales():
-        cursor = mysql.get_db().cursor()
-        cursor.execute("CALL show_branch_offices()")
-        sucursal = cursor.fetchall()
-        cursor.close()
-        return render_template("admin_sucursales.html", sucursal = sucursal)
+        if authenticate():
+                cursor = mysql.get_db().cursor()
+                cursor.execute("CALL show_branch_offices()")
+                sucursal = cursor.fetchall()
+                cursor.close()
+                return render_template("admin_sucursales.html", sucursal = sucursal)
+        return index()
 
 @app.route("/admin_horarios", methods = [ "GET" ])
 def admin_horarios():
-        cursor = mysql.get_db().cursor()
-        cursor.execute("CALL show_schedules()")
-        schedules = cursor.fetchall()
-        cursor.close()
-        return render_template("admin_horarios.html", schedules = schedules)
+        if authenticate():
+                cursor = mysql.get_db().cursor()
+                cursor.execute("CALL show_schedules()")
+                schedules = cursor.fetchall()
+                cursor.close()
+                return render_template("admin_horarios.html", schedules = schedules)
+        return index()
 
 @app.route("/admin_recetas", methods = [ "GET" ])
 def admin_recetas():
-        cursor = mysql.get_db().cursor()
-        cursor.execute("CALL show_prescriptions()")
-        prescriptions = cursor.fetchall()
-        cursor.close()
-        return render_template("admin_recetas.html", prescriptions = prescriptions)
+        if authenticate():
+                cursor = mysql.get_db().cursor()
+                cursor.execute("CALL show_prescriptions()")
+                prescriptions = cursor.fetchall()
+                cursor.close()
+                return render_template("admin_recetas.html", prescriptions = prescriptions)
+        return index()
 
 @app.route("/admin_notas", methods = [ "GET" ])
 def admin_notas():
-        cursor = mysql.get_db().cursor()
-        cursor.execute("CALL show_notes()")
-        notes = cursor.fetchall()
-        cursor.close()
-        return render_template("admin_notas.html", notes = notes)
+        if authenticate():
+                cursor = mysql.get_db().cursor()
+                cursor.execute("CALL show_notes()")
+                notes = cursor.fetchall()
+                cursor.close()
+                return render_template("admin_notas.html", notes = notes)
+        return index()
 
 @app.route("/admin_registrar_paciente", methods = [ "POST" ])
 def admin_registrar_paciente():
-        first_name = request.form["first-name"]
-        last_name1 = request.form["last-name1"]
-        last_name2 = request.form["last-name2"]
-        phone = request.form["tel-field"]
-        email = request.form["email-field"]
-        birthdate = request.form["birthdate-field"]
-        cursor = mysql.get_db().cursor()
-        cursor.callproc("sign_patient", (first_name, last_name1, last_name2, phone, email, birthdate))
-        mysql.get_db().commit()
-        cursor.callproc("get_patient", (email, ))
-        valido = cursor.fetchone()
-        return admin_pacientes()
+        if authenticate():
+                first_name = request.form["first-name"]
+                last_name1 = request.form["last-name1"]
+                last_name2 = request.form["last-name2"]
+                phone = request.form["tel-field"]
+                email = request.form["email-field"]
+                birthdate = request.form["birthdate-field"]
+                cursor = mysql.get_db().cursor()
+                cursor.callproc("sign_patient", (first_name, last_name1, last_name2, phone, email, birthdate))
+                mysql.get_db().commit()
+                cursor.callproc("get_patient", (email, ))
+                valido = cursor.fetchone()
+                return admin_pacientes()
+        return index()
 
 @app.route("/admin_registrar_cuidado", methods = [ "POST" ])
 def admin_registrar_cuidado():
-        descripcion = request.form["in-cuidado"]
-        cursor = mysql.get_db().cursor()
-        cursor.callproc("create_care", (descripcion, ))
-        mysql.get_db().commit()
-        return admin_pacientes()
+        if authenticate():
+                descripcion = request.form["in-cuidado"]
+                cursor = mysql.get_db().cursor()
+                cursor.callproc("create_care", (descripcion, ))
+                mysql.get_db().commit()
+                return admin_pacientes()
+        return index()
 
 @app.route("/admin_registrar_nota", methods = [ "POST" ])
 def admin_registrar_nota():
-        id_cid = request.form["id_cita"]
-        nota = request.form["nota"]
-        cursor = mysql.get_db().cursor()
-        cursor.callproc("create_note", (id_cid,nota))
-        mysql.get_db().commit()
-        return admin_notas()
+        if authenticate():
+                id_cid = request.form["id_cita"]
+                nota = request.form["nota"]
+                cursor = mysql.get_db().cursor()
+                cursor.callproc("create_note", (id_cid,nota))
+                mysql.get_db().commit()
+                return admin_notas()
+        return index()
 
 @app.route("/admin_registrar_receta", methods = [ "POST" ])
 def admin_registrar_receta():
-        id_cid = request.form["id_cid"]
-        id_mid = request.form["id_mid"]
-        frecuencia = request.form["frecuencia"]
-        print(id_cid+" "+id_mid+" "+frecuencia)
-        cursor = mysql.get_db().cursor()
-        cursor.callproc("create_receta", (id_cid, id_mid, frecuencia))
-        mysql.get_db().commit()
-        return admin_recetas()
+        if authenticate():
+                id_cid = request.form["id_cid"]
+                id_mid = request.form["id_mid"]
+                frecuencia = request.form["frecuencia"]
+                print(id_cid+" "+id_mid+" "+frecuencia)
+                cursor = mysql.get_db().cursor()
+                cursor.callproc("create_receta", (id_cid, id_mid, frecuencia))
+                mysql.get_db().commit()
+                return admin_recetas()
+        return index()
 
 @app.route("/admin_registrar_cuidado_paciente", methods = [ "POST" ])
 def admin_registrar_cuidado_paciente():
-        id_paciente = request.form["id-patient"]
-        id_cuidado = request.form["id-care"]
-        cursor = mysql.get_db().cursor()
-        cursor.callproc("sign_cuidado_paciente", (id_paciente, id_cuidado))
-        mysql.get_db().commit()
-        return admin_pacientes()
+        if authenticate():
+                id_paciente = request.form["id-patient"]
+                id_cuidado = request.form["id-care"]
+                cursor = mysql.get_db().cursor()
+                cursor.callproc("sign_cuidado_paciente", (id_paciente, id_cuidado))
+                mysql.get_db().commit()
+                return admin_pacientes()
+        return index()
 
 @app.route("/admin_registrar_clinica", methods = [ "POST" ])
 def admin_registra_clinica():
-        nombre = request.form["nombre"]
-        direccion = request.form["direccion"]
-        telefono = request.form["telefono"]
-        cursor = mysql.get_db().cursor()
-        cursor.callproc("registrar_sucursal", (direccion, nombre, telefono))
-        mysql.get_db().commit()
-        return admin_pacientes()
+        if authenticate():
+                nombre = request.form["nombre"]
+                direccion = request.form["direccion"]
+                telefono = request.form["telefono"]
+                cursor = mysql.get_db().cursor()
+                cursor.callproc("registrar_sucursal", (direccion, nombre, telefono))
+                mysql.get_db().commit()
+                return admin_pacientes()
+        return index()
         
 @app.route("/admin_registrar_horario", methods = [ "POST" ])
 def registrar_horario():
-        id_den = request.form["id_den"]
-        dia = request.form["dia"]
-        horai = request.form["horai"]
-        horaf = request.form["horaf"]
-        cursor = mysql.get_db().cursor()
-        cursor.callproc("create_schedule", (id_den, dia, horai, horaf))
-        mysql.get_db().commit()
-        return admin_horarios()
+        if authenticate():
+                id_den = request.form["id_den"]
+                dia = request.form["dia"]
+                horai = request.form["horai"]
+                horaf = request.form["horaf"]
+                cursor = mysql.get_db().cursor()
+                cursor.callproc("create_schedule", (id_den, dia, horai, horaf))
+                mysql.get_db().commit()
+                return admin_horarios()
+        return index()
         
 
 @app.route("/admin_modificar", methods = [ "POST" ])
 def admin_modificar():
-        tabla = request.form["tabla"]
-        id_nombre = request.form["id_nombre"]
-        id = request.form["id"]
-        atributo = request.form["atributo"]
-        valor = request.form["valor"]
-        cursor = mysql.get_db().cursor()
-        cursor.execute("UPDATE {0} SET {1}='{2}' WHERE {3}={4}".format(tabla, atributo, valor,id_nombre, id))
-        mysql.get_db().commit()
-        return admin_pacientes()
+        if authenticate():
+                tabla = request.form["tabla"]
+                id_nombre = request.form["id_nombre"]
+                id = request.form["id"]
+                atributo = request.form["atributo"]
+                valor = request.form["valor"]
+                cursor = mysql.get_db().cursor()
+                cursor.execute("UPDATE {0} SET {1}='{2}' WHERE {3}={4}".format(tabla, atributo, valor,id_nombre, id))
+                mysql.get_db().commit()
+                return admin_pacientes()
+        return index()
 
 @app.route("/admin_modificarb", methods = [ "POST" ])
 def admin_modificarb():
-        tabla = request.form["tabla"]
-        id_nombre = request.form["id_nombre"]
-        id = request.form["id"]
-        atributo = request.form["atributo"]
-        valor = request.form["valor"]
-        cursor = mysql.get_db().cursor()
-        cursor.execute("UPDATE {0} SET {1}=b'{2}' WHERE {3}={4}".format(tabla, atributo, valor,id_nombre, id))
-        mysql.get_db().commit()
-        return admin_pacientes()
+        if authenticate():
+                tabla = request.form["tabla"]
+                id_nombre = request.form["id_nombre"]
+                id = request.form["id"]
+                atributo = request.form["atributo"]
+                valor = request.form["valor"]
+                cursor = mysql.get_db().cursor()
+                cursor.execute("UPDATE {0} SET {1}=b'{2}' WHERE {3}={4}".format(tabla, atributo, valor,id_nombre, id))
+                mysql.get_db().commit()
+                return admin_pacientes()
+        return index()
 
 @app.route("/admin_modificarc", methods = [ "POST" ])
 def admin_modificarc():
-        tabla = request.form["tabla"]
-        id_cid = request.form["id_cid"]
-        id_mid = request.form["id_mid"]
-        atributo = request.form["atributo"]
-        valor = request.form["valor"]
-        cursor = mysql.get_db().cursor()
-        cursor.execute("UPDATE {0} SET {1}='{2}' WHERE cid={3} AND mid={4}".format(tabla, atributo, valor,id_cid, id_mid))
-        mysql.get_db().commit()
-        return admin_recetas()
+        if authenticate():
+                tabla = request.form["tabla"]
+                id_cid = request.form["id_cid"]
+                id_mid = request.form["id_mid"]
+                atributo = request.form["atributo"]
+                valor = request.form["valor"]
+                cursor = mysql.get_db().cursor()
+                cursor.execute("UPDATE {0} SET {1}='{2}' WHERE cid={3} AND mid={4}".format(tabla, atributo, valor,id_cid, id_mid))
+                mysql.get_db().commit()
+                return admin_recetas()
+        return index()
 
 @app.route("/admin_modificar_dentistas", methods = [ "POST" ])
 def admin_modificar_dentistas():
-        tabla = request.form["tabla"]
-        id_nombre = request.form["id_nombre"]
-        id = request.form["id"]
-        atributo = request.form["atributo"]
-        valor = request.form["valor"]
-        cursor = mysql.get_db().cursor()
-        cursor.execute("UPDATE {0} SET {1}='{2}' WHERE {3}={4}".format(tabla, atributo, valor,id_nombre, id))
-        mysql.get_db().commit()
-        return admin_dentistas()
+        if authenticate():
+                tabla = request.form["tabla"]
+                id_nombre = request.form["id_nombre"]
+                id = request.form["id"]
+                atributo = request.form["atributo"]
+                valor = request.form["valor"]
+                cursor = mysql.get_db().cursor()
+                cursor.execute("UPDATE {0} SET {1}='{2}' WHERE {3}={4}".format(tabla, atributo, valor,id_nombre, id))
+                mysql.get_db().commit()
+                return admin_dentistas()
+        return index()
 
 @app.route("/admin_dentistas", methods = [ "GET" ])
 def admin_dentistas():
-        cursor = mysql.get_db().cursor()
-        cursor.execute("CALL show_dentists()")
-        dentistas = cursor.fetchall()
-        cursor.execute("CALL show_specialties()")
-        especialidades = cursor.fetchall()
-        cursor.execute("CALL show_dentists_specialties()")
-        den_esp = cursor.fetchall()
-        cursor.close()
-        return render_template("admin_dentistas.html", dentistas = dentistas, especialidades = especialidades, den_esp = den_esp)
+        if authenticate():
+                cursor = mysql.get_db().cursor()
+                cursor.execute("CALL show_dentists()")
+                dentistas = cursor.fetchall()
+                cursor.execute("CALL show_specialties()")
+                especialidades = cursor.fetchall()
+                cursor.execute("CALL show_dentists_specialties()")
+                den_esp = cursor.fetchall()
+                cursor.close()
+                return render_template("admin_dentistas.html", dentistas = dentistas, especialidades = especialidades, den_esp = den_esp)
+        return index()
 
 @app.route("/admin_registrar_dentista", methods = [ "POST" ])
 def admin_registrar_dentista():
-        first_name = request.form["first-name"]
-        last_name1 = request.form["last-name1"]
-        last_name2 = request.form["last-name2"]
-        tel_field = request.form["tel-field"]
-        address_field = request.form["address-field"]
-        cedula_field = request.form["cedula-field"]
-        rfc_field = request.form["rfc-field"]
-        user_field = request.form["user-field"]
-        pass_field = request.form["pass-field"]
-        pass_field = generate_password_hash(pass_field)
-        
-        cursor = mysql.get_db().cursor()
-        cursor.callproc("sign_dentista", (rfc_field, first_name, last_name1, last_name2, address_field, tel_field, cedula_field))
-        mysql.get_db().commit()
-        cursor.callproc("get_dentist_id", (rfc_field, ))
-        eid = cursor.fetchone()
-        cursor.callproc("sign_user", (user_field, pass_field, eid))
-        mysql.get_db().commit()
-        return admin_dentistas()
+        if authenticate():
+                first_name = request.form["first-name"]
+                last_name1 = request.form["last-name1"]
+                last_name2 = request.form["last-name2"]
+                tel_field = request.form["tel-field"]
+                address_field = request.form["address-field"]
+                cedula_field = request.form["cedula-field"]
+                rfc_field = request.form["rfc-field"]
+                user_field = request.form["user-field"]
+                pass_field = request.form["pass-field"]
+                pass_field = generate_password_hash(pass_field)
+                
+                cursor = mysql.get_db().cursor()
+                cursor.callproc("sign_dentista", (rfc_field, first_name, last_name1, last_name2, address_field, tel_field, cedula_field))
+                mysql.get_db().commit()
+                cursor.callproc("get_dentist_id", (rfc_field, ))
+                eid = cursor.fetchone()
+                cursor.callproc("sign_user", (user_field, pass_field, eid))
+                mysql.get_db().commit()
+                return admin_dentistas()
+        return index()
 
 @app.route("/admin_registrar_especialidad", methods = [ "POST" ])
 def admin_registrar_especialidad():
-        id_specialties = request.form["id-specialties"]
-        specialties_desc = request.form["specialties-desc"]
-        cursor = mysql.get_db().cursor()
-        cursor.callproc("create_specialty", (id_specialties, specialties_desc))
-        mysql.get_db().commit()
-        return admin_dentistas()
+        if authenticate():
+                id_specialties = request.form["id-specialties"]
+                specialties_desc = request.form["specialties-desc"]
+                cursor = mysql.get_db().cursor()
+                cursor.callproc("create_specialty", (id_specialties, specialties_desc))
+                mysql.get_db().commit()
+                return admin_dentistas()
+        return index()
 
 @app.route("/admin_registrar_den_esp", methods = [ "POST" ])
 def admin_registrar_den_esp():
-        id_dentist = request.form["id-dentist"]
-        id_specialty = request.form["id-specialty"]
-        cursor = mysql.get_db().cursor()
-        cursor.callproc("create_dentist_specialty", (id_dentist, id_specialty))
-        mysql.get_db().commit()
-        return admin_dentistas()
+        if authenticate():
+                id_dentist = request.form["id-dentist"]
+                id_specialty = request.form["id-specialty"]
+                cursor = mysql.get_db().cursor()
+                cursor.callproc("create_dentist_specialty", (id_dentist, id_specialty))
+                mysql.get_db().commit()
+                return admin_dentistas()
+        return index()
 
 @app.route("/admin_servmed", methods = [ "GET" ])
 def admin_servmed():
-        cursor = mysql.get_db().cursor()
-        cursor.execute("CALL show_services()")
-        servicios = cursor.fetchall()
-        cursor.execute("CALL show_medicines()")
-        medicinas = cursor.fetchall()
-        cursor.close()
-        return render_template("admin_servmed.html", servicios = servicios, medicinas = medicinas)
+        if authenticate():
+                cursor = mysql.get_db().cursor()
+                cursor.execute("CALL show_services()")
+                servicios = cursor.fetchall()
+                cursor.execute("CALL show_medicines()")
+                medicinas = cursor.fetchall()
+                cursor.close()
+                return render_template("admin_servmed.html", servicios = servicios, medicinas = medicinas)
+        return index()
 
 @app.route("/admin_registrar_servicio", methods = [ "POST" ])
 def admin_registrar_servicio():
-        nombre = request.form["serv-name"]
-        descripcion = request.form["serv-desc"]
-        duracion = request.form["serv-dur"]
-        esBasico = request.form["is-basic"]
-        categoria = request.form["serv-cat"]
-        cursor = mysql.get_db().cursor()
-        cursor.callproc("create_service", (nombre, descripcion, duracion, esBasico, categoria))
-        mysql.get_db().commit()
-        return admin_servmed()
+        if authenticate():
+                nombre = request.form["serv-name"]
+                descripcion = request.form["serv-desc"]
+                duracion = request.form["serv-dur"]
+                esBasico = request.form["is-basic"]
+                categoria = request.form["serv-cat"]
+                cursor = mysql.get_db().cursor()
+                cursor.callproc("create_service", (nombre, descripcion, duracion, esBasico, categoria))
+                mysql.get_db().commit()
+                return admin_servmed()
+        return index()
 
 @app.route("/admin_registrar_medicamento", methods = [ "POST" ])
 def admin_registrar_medicamento():
-        nombre = request.form["med-name"]
-        via = request.form["a-route"]
-        descripcion = request.form["med-desc"]
-        dosis = request.form["med-dose"]
-        cursor = mysql.get_db().cursor()
-        cursor.callproc("create_medicine", (nombre, via, descripcion, dosis))
-        mysql.get_db().commit()
-        return admin_servmed()
+        if authenticate():
+                nombre = request.form["med-name"]
+                via = request.form["a-route"]
+                descripcion = request.form["med-desc"]
+                dosis = request.form["med-dose"]
+                cursor = mysql.get_db().cursor()
+                cursor.callproc("create_medicine", (nombre, via, descripcion, dosis))
+                mysql.get_db().commit()
+                return admin_servmed()
+        return index()
 
 @app.route("/admin_modificarServmed", methods = [ "POST" ])
 def admin_modificarServmed():
-        tabla = request.form["tabla"]
-        id_nombre = request.form["id_nombre"]
-        id = request.form["id"]
-        atributo = request.form["atributo"]
-        valor = request.form["valor"]
-        cursor = mysql.get_db().cursor()
-        if(atributo != "esBasico"):
-                cursor.execute("UPDATE {0} SET {1}='{2}' WHERE {3}={4}".format(tabla, atributo, valor,id_nombre, id))
-        else:
-                cursor.execute("UPDATE {0} SET {1}=b'{2}' WHERE {3}={4}".format(tabla, atributo, valor,id_nombre, id))
-        mysql.get_db().commit()
-        return admin_servmed()
+        if authenticate():
+                tabla = request.form["tabla"]
+                id_nombre = request.form["id_nombre"]
+                id = request.form["id"]
+                atributo = request.form["atributo"]
+                valor = request.form["valor"]
+                cursor = mysql.get_db().cursor()
+                if(atributo != "esBasico"):
+                        cursor.execute("UPDATE {0} SET {1}='{2}' WHERE {3}={4}".format(tabla, atributo, valor,id_nombre, id))
+                else:
+                        cursor.execute("UPDATE {0} SET {1}=b'{2}' WHERE {3}={4}".format(tabla, atributo, valor,id_nombre, id))
+                mysql.get_db().commit()
+                return admin_servmed()
+        return index()
 
 @app.route("/admin_borrar_cita", methods = [ "POST" ])
 def admin_borrar_cita():
-        cid = request.form["cid-field"]
-        cursor = mysql.get_db().cursor()
-        cursor.callproc("delete_appointment", (cid, ))
-        mysql.get_db().commit()
-        cursor.close()
-        return admin_citas()
+        if authenticate():
+                cid = request.form["cid-field"]
+                cursor = mysql.get_db().cursor()
+                cursor.callproc("delete_appointment", (cid, ))
+                mysql.get_db().commit()
+                cursor.close()
+                return admin_citas()
+        return index
 
 @app.route("/admin_modificar_citas", methods = [ "POST" ])
 def admin_modificar_citas():
-        tabla = request.form["tabla"]
-        id_nombre = request.form["id_nombre"]
-        id = request.form["id"]
-        atributo = request.form["atributo"]
-        valor = request.form["valor"]
-        cursor = mysql.get_db().cursor()
-        cursor.execute("UPDATE {0} SET {1}='{2}' WHERE {3}={4}".format(tabla, atributo, valor,id_nombre, id))
-        mysql.get_db().commit()
-        return admin_citas()
+        if authenticate():
+                tabla = request.form["tabla"]
+                id_nombre = request.form["id_nombre"]
+                id = request.form["id"]
+                atributo = request.form["atributo"]
+                valor = request.form["valor"]
+                cursor = mysql.get_db().cursor()
+                cursor.execute("UPDATE {0} SET {1}='{2}' WHERE {3}={4}".format(tabla, atributo, valor,id_nombre, id))
+                mysql.get_db().commit()
+                return admin_citas()
+        return index()
 
 @app.route("/admin_citas", methods = [ "GET" ])
 def admin_citas():
-        cursor = mysql.get_db().cursor()
-        cursor.execute("CALL show_appointments()")
-        citas = cursor.fetchall()
-        return render_template("admin_citas.html", citas = citas)
+        if authenticate():
+                cursor = mysql.get_db().cursor()
+                cursor.execute("CALL show_appointments()")
+                citas = cursor.fetchall()
+                return render_template("admin_citas.html", citas = citas)
+        return index()
 
 #@app.route("/administrar/<string:>", methods = [ "GET" ])
 #def admin_citas():       

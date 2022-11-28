@@ -420,7 +420,7 @@
             }
             
         $("#form-nuevo").on("submit", function() {
-            url = "http://localhost:5000/val_usuario/" + $("#email-field").val();
+            url = window.location.origin + "/val_usuario/" + $("#email-field").val();
             xHTTP.open("GET", url, false);
             xHTTP.send();
             if (!bandera) {

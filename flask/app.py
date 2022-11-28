@@ -478,19 +478,20 @@ def registrar():
         mysql.get_db().commit()
         cursor.callproc("get_patient", (email, ))
         valido = cursor.fetchone()
-        return redirect("http://localhost:5000/citas/" + str(valido[0]), code = 307)
+        valido = hex(17092002 + valido[0])
+        return redirect(request.url_root + "citas/" + valido, code = 307)
 
-@app.route("/citas/<string:id>", methods = [ "GET" ])
+@app.route("/citas/<string:id>", methods = [ "GET", "POST" ])
 def citas(id):
         id = int(id, 16) - 17092002
         if id < 0:
-                return redirect("http://localhost:5000/agendar", code = 403)
+                return redirect(request.url_root + "agendar", code = 403)
         id = str(id)
         cur = mysql.get_db().cursor()
         cur.callproc("exists_patient", (id, ))
         existe = cur.fetchone()[0]
         if existe == 0:
-                return redirect("http://localhost:5000/agendar", code = 403)
+                return redirect(request.url_root + "agendar", code = 403)
         cur.execute('''SELECT eid, nombres, apellidoM, apellidoP FROM dentistas ''')
         Autos = cur.fetchall()
         cur.callproc("basic_patient", (id, ))

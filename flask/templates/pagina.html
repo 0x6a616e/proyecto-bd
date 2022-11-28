@@ -166,7 +166,7 @@
 
         f.onsubmit=function(){
             if ($("#select-horario").val() == null) {
-                url="http://localhost:5000/buscar/"+fecha.value+"&"+doctor.value+"&"+s.value;
+                url=window.location.origin + "/buscar/"+fecha.value+"&"+doctor.value+"&"+s.value;
                 HTTP.open("GET", url);
                 HTTP.send();
                 return false;

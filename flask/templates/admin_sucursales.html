@@ -251,42 +251,6 @@
             $("#btp"+tabActiva).addClass("text-white bg-morado");
         });
     
-        let tabActiva2 = 1;
-        $("#btc1").addClass("text-white bg-morado");
-        for (var i = 2; i <= 4; i++) {
-            $("#btc"+i).addClass("text-morado");
-        }
-
-
-        function cerrarModal() {
-                $("#cliente_existente").modal("toggle");
-                $("#cliente_invalido").modal("toggle");
-        };
-
-        const xHTTP = new XMLHttpRequest();
-        bandera = false;
-
-        xHTTP.onreadystatechange = function() {
-                if (this.readyState == 4 && this.status == 200) {
-                    validado = JSON.parse(xHTTP.responseText)["validado"]
-                    if (validado != "") {
-                        $("#cliente_invalido").modal("toggle");
-                        $("#cliente_existente").modal("toggle");
-                    } else {
-                        bandera = true;
-                    }
-                }
-            }
-            
-        $("#form-nuevo").on("submit", function() {
-            url = "http://localhost:5000/val_usuario/" + $("#email-field").val();
-            xHTTP.open("GET", url, false);
-            xHTTP.send();
-            if (!bandera) {
-                return false;
-            }
-        });
-
         $("button").click(function(event) {
             if (event.target.id.indexOf("-") != -1) {
                 $("#id-field").val(event.target.id.substr(4));

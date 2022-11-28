@@ -308,21 +308,6 @@
                                 <button class="btn btn-morado col-sm-3" type="submit">Registrar</button>
                             </div>
                         </form>
-                        <div class="modal fade" id="cliente_existente" tabindex="-1" role="dialog" aria-labelledby="cliente_existente" aria-hidden="true">
-                            <div class="modal-dialog modal-dialog-centered" role="document">
-                                <div class="modal-content">
-                                    <div class="modal-header">
-                                        <h5 class="modal-title" id="cliente_existente_titulo">Correo ya existente</h5>
-                                    </div>
-                                    <div class="modal-body">
-                                        Ya hay una cuenta asociada a este correo.
-                                    </div>
-                                    <div class="modal-footer">
-                                        <button type="button" class="btn btn-primary btn-morado" onclick="cerrarModal()">Entendido</button>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
                     </div>
 
                     <div id="opc2" class="container tab-pane fade">
@@ -344,7 +329,7 @@
                         </table>
                     </div>
                     <div id="opc3" class="container tab-pane fade">
-                        <form id="form-nuevo" action="/admin_registrar_cuidado" method="POST">
+                        <form id="form-cuidado" action="/admin_registrar_cuidado" method="POST">
                             <div class="row pt-4">
                                 <div class="col">
                                     <label>Descripción del cuidado especial</label>
@@ -398,14 +383,6 @@
             $("#btp"+tabActiva).addClass("text-white bg-morado");
         });
 
-        $("#btp2").on("click", function() {
-            $("#btp"+tabActiva).removeClass("text-white bg-morado");
-            $("#btp"+tabActiva).addClass("text-morado");
-            tabActiva = 2;
-            $("#btp"+tabActiva).removeClass("text-morado");
-            $("#btp"+tabActiva).addClass("text-white bg-morado");
-        });
-        
         $("#btp3").on("click", function() {
             $("#btp"+tabActiva).removeClass("text-white bg-morado");
             $("#btp"+tabActiva).addClass("text-morado");
@@ -454,7 +431,6 @@
 
         function cerrarModal() {
                 $("#cliente_existente").modal("toggle");
-                $("#cliente_invalido").modal("toggle");
         };
 
         const xHTTP = new XMLHttpRequest();
@@ -464,7 +440,6 @@
                 if (this.readyState == 4 && this.status == 200) {
                     validado = JSON.parse(xHTTP.responseText)["validado"]
                     if (validado != "") {
-                        $("#cliente_invalido").modal("toggle");
                         $("#cliente_existente").modal("toggle");
                     } else {
                         bandera = true;
@@ -473,7 +448,7 @@
             }
             
         $("#form-nuevo").on("submit", function() {
-            url = "http://localhost:5000/val_usuario/" + $("#email-field").val();
+            url = window.location.origin + "/val_usuario/" + $("#email-field").val();
             xHTTP.open("GET", url, false);
             xHTTP.send();
             if (!bandera) {

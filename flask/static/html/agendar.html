@@ -7,7 +7,7 @@
         <link rel="stylesheet" href="/static/css/custom.css">
         <link rel="stylesheet" href="/static/css/custom.css.map">
         <title>Arte Dental</title>
-    </head>    
+    </head>
     <body>
         <header>
             <nav class="px-5 navbar navbar-expand-sm bg-white fixed-top">
@@ -216,13 +216,13 @@
                         $("#cliente_invalido").modal("toggle");
                     } else {
                         id = validado;
-                        window.location.href = "http://localhost:5000/citas/" + id;
+                        window.location.href = window.location.origin + "/citas/" + id;
                     }
                 }
             }
             
             $("#form-viejo").on("submit", function() {
-                url = "http://localhost:5000/val_usuario/" + emailViejo.value;
+                url = window.location.origin + "/val_usuario/" + emailViejo.value;
                 HTTP.open("GET", url);
                 HTTP.send();
                 return false;
@@ -234,6 +234,7 @@
                     if (validado != "") {
                         $("#cliente_invalido").modal("toggle");
                         $("#cliente_existente").modal("toggle");
+                        bandera = false;
                     } else {
                         bandera = true;
                     }
@@ -241,7 +242,7 @@
             }
             
             $("#form-nuevo").on("submit", function() {
-                url = "http://localhost:5000/val_usuario/" + $("#email-field").val();
+                url = window.location.origin + "/val_usuario/" + $("#email-field").val();
                 xHTTP.open("GET", url, false);
                 xHTTP.send();
                 if (!bandera) {

@@ -97,7 +97,7 @@
                 <!--menu pills-->
                 <div class="tab-content">
                     <div id="op1" class="container tab-pane active">
-                        <form id="form-nuevo" action="/admin_registrar_receta" method="POST">
+                        <form id="form-registrar-receta" action="/admin_registrar_receta" method="POST">
                             <div class="row pt-4">
                                 <div class="col">
                                     <label>ID Cita</label>
@@ -105,11 +105,11 @@
                                 </div>
                                 <div class="col">
                                     <label>ID Medicamento</label>
-                                    <input name="id_mid" type="text" class="form-control" id="last-name1-field" placeholder="Avenida" required>
+                                    <input name="id_mid" type="text" class="form-control" id="registrar-idmedicamento-field" placeholder="Avenida" required>
                                 </div>
                                 <div class="col">
                                     <label>Frecuencia</label>
-                                    <input name="frecuencia" type="text" class="form-control" id="last-name2-field" placeholder="111-111-1111" required>
+                                    <input name="frecuencia" type="text" class="form-control" id="frecuencia-field" placeholder="111-111-1111" required>
                                 </div>
                             </div>
                             <div class="row pt-4">
@@ -119,7 +119,7 @@
                     </div>
 
                     <div id="op2" class="container tab-pane fade">
-                        <form id="form-nuevo" action="/admin_modificarc" method="POST">
+                        <form id="form-modificar-receta" action="/admin_modificarc" method="POST">
                             <input type="hidden" name="tabla" value="recetas">
                             <div class="row pt-4">
                                 <div class="col">
@@ -128,7 +128,7 @@
                                 </div>
                                 <div class="col">
                                     <label>ID Medicamento</label>
-                                    <input name="id_mid" type="text" class="form-control" id="last-name1-field" placeholder="Avenida" required>
+                                    <input name="id_mid" type="text" class="form-control" id="modificar-idmedicamento-field" placeholder="Avenida" required>
                                 </div>
                                 <div class="col">
                                     <label>Atributo a modificar</label>
@@ -207,43 +207,6 @@
             $("#btp"+tabActiva).removeClass("text-morado");
             $("#btp"+tabActiva).addClass("text-white bg-morado");
         });
-    
-        let tabActiva2 = 1;
-        $("#btc1").addClass("text-white bg-morado");
-        for (var i = 2; i <= 4; i++) {
-            $("#btc"+i).addClass("text-morado");
-        }
-
-
-        function cerrarModal() {
-                $("#cliente_existente").modal("toggle");
-                $("#cliente_invalido").modal("toggle");
-        };
-
-        const xHTTP = new XMLHttpRequest();
-        bandera = false;
-
-        xHTTP.onreadystatechange = function() {
-                if (this.readyState == 4 && this.status == 200) {
-                    validado = JSON.parse(xHTTP.responseText)["validado"]
-                    if (validado != "") {
-                        $("#cliente_invalido").modal("toggle");
-                        $("#cliente_existente").modal("toggle");
-                    } else {
-                        bandera = true;
-                    }
-                }
-            }
-            
-        $("#form-nuevo").on("submit", function() {
-            url = "http://localhost:5000/val_usuario/" + $("#email-field").val();
-            xHTTP.open("GET", url, false);
-            xHTTP.send();
-            if (!bandera) {
-                return false;
-            }
-        });    
-
     </script>
 </body>
 </html>

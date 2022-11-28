@@ -52,7 +52,7 @@
         <main class="px-5">
             <h1 class="text-center">Login</h1>
             <div class="">
-                <form id="form-dentista" class="" action="http://localhost:5000/admin_pacientes">
+                <form id="form-dentista" class="" action="/admin_pacientes">
                     <div class="col-sm-3 mx-auto pt-4">
                         <div class="row">
                             <label>Usuario</label>
@@ -128,7 +128,7 @@
             }
             
             $("#form-dentista").on("submit", function() {
-                url = "http://localhost:5000/val_dentista/" + $("#user-field").val() + "&" + $("#pass-field").val();
+                url = window.location.origin + "/val_dentista/" + $("#user-field").val() + "&" + $("#pass-field").val();
                 xHTTP.open("GET", url, false);
                 xHTTP.send();
                 if (!bandera) {

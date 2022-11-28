@@ -1,4 +1,4 @@
-insert into usuarios (usuario, contrasenia, eid) values ('rdrake0', 'l0FOBCP', 1);
+insert into usuarios (usuario, contrasenia, eid) values ('rdrake0', 'pbkdf2:sha256:260000$A1mqXacNU3MfClGW$d3df608cb55c88808e948953eb12b1a78f518ca6f8622a441b5fd90a213ef7c8', 1);
 insert into usuarios (usuario, contrasenia, eid) values ('gitzik1', 'vRut8C2', 2);
 insert into usuarios (usuario, contrasenia, eid) values ('rwisby2', 'nxCfiHDR06', 3);
 insert into usuarios (usuario, contrasenia, eid) values ('pbelt3', 'f3rNRjpNcC8', 4);
